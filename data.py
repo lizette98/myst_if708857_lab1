@@ -124,9 +124,8 @@ comisiones = []
 #Obtener posicion inicial (los % de KOFL, KOFUBL, BSMXB, USD asignarlos a CASH (eliminados))
 c_activos = ['KOFL', 'KOFUBL', 'BSMXB', 'MXN', 'USD']
 #Diccionario para resultado final
-inv_pasiva = {'timestamp': ['05-01-2018'], 'capital': [k]}
+inv_pasiva = {'timestamp': ['30-01-2018'], 'capital': [k]}
 
-###----FALTA revisar que el archivo sea del 1er mes
 pos_datos = data_archivos[archivos[0]].copy().sort_values('Ticker')[['Ticker', 'Nombre', 'Peso (%)']]
 
 #Extraer la lista de activos a eliminar
@@ -151,7 +150,7 @@ pos_datos['Ticker'] = pos_datos['Ticker'].replace('GFREGIOO.MX', 'RA.MX')
 match = 7
 precios.index.to_list()[match]
 
-#Precios necesarios para la posicion metodo 1
+#Precios necesarios para la posicion
 #m1 = np.array(precios.iloc[match, [i in pos_datos['Ticker'].to_list() for i in precios.columns.to_list()]])
 m2 = [precios.iloc[match, precios.columns.to_list().index(i)] for i in pos_datos['Ticker']]
 
