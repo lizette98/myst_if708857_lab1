@@ -24,3 +24,22 @@ def func_fechas(p_archivos):
     func_fechas_r = {'i_fechas': i_fechas, 't_fechas': t_fechas}
 
     return func_fechas_r
+
+#--------- Tickers para yfinance
+def func_tickers(p_archivos, p_data_archivos):
+    tickers = []
+    for i in p_archivos:
+        l_tickers = list(p_data_archivos[i]['Ticker'])
+        [tickers.append(i + '.MX') for i in l_tickers]
+    global_tickers = np.unique(tickers).tolist()
+
+    # Obtener posiciones historicas
+    # Reemplazar tickers que han cambiado o son diferentes en yfinance
+    global_tickers = [i.replace('GFREGIOO.MX', 'RA.MX') for i in global_tickers]
+    global_tickers = [i.replace('MEXCHEM.MX', 'ORBIA.MX') for i in global_tickers]
+    global_tickers = [i.replace('LIVEPOLC.1.MX', 'LIVEPOLC-1.MX') for i in global_tickers]
+
+    # Eliminar MXN, USD, KOFL
+    [global_tickers.remove(i) for i in ['MXN.MX', 'USD.MX', 'KOFL.MX', 'KOFUBL.MX', 'BSMXB.MX']]
+
+    return global_tickers

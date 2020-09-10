@@ -11,11 +11,13 @@
 
 #importar librerias
 import pandas as pd
-from os import listdir, path
-from os.path import isfile, join
 import numpy as np
 import yfinance as yf
 import time as time
+from os import listdir, path
+from os.path import isfile, join
+
+
 import functions as fn
 
 pd.set_option('display.expand_frame_rep', False)
@@ -64,21 +66,10 @@ for i in archivos:
 #Funcion para obtener dates
 dates = fn.func_fechas(p_archivos=archivos)
 
+#------- Funcion para tickers
+global_tickers = fn.func_tickers(p_archivos=archivos, p_data_archivos=data_archivos)
+
 # Descargar y acomodar datos
-tickers = []
-for i in archivos:
-    l_tickers = list(data_archivos[i]['Ticker'])
-    [tickers.append(i + '.MX') for i in l_tickers]
-global_tickers = np.unique(tickers).tolist()
-
-# Obtener posiciones historicas
-#Reemplazar tickers que han cambiado o son diferentes en yfinance
-global_tickers = [i.replace('GFREGIOO.MX', 'RA.MX') for i in global_tickers]
-global_tickers = [i.replace('MEXCHEM.MX', 'ORBIA.MX') for i in global_tickers]
-global_tickers = [i.replace('LIVEPOLC.1.MX', 'LIVEPOLC-1.MX') for i in global_tickers]
-
-#Eliminar MXN, USD, KOFL
-[global_tickers.remove(i) for i in ['MXN.MX', 'USD.MX', 'KOFL.MX', 'KOFUBL.MX', 'BSMXB.MX']]
 
 #Nota: Cuando se utiliza KOF, ese % o ponderacion la pasamos CASH
 #Contar tiempo que tarda
@@ -149,7 +140,7 @@ precios.index.to_list()[match]
 #m1 = np.array(precios.iloc[match, [i in pos_datos['Ticker'].to_list() for i in precios.columns.to_list()]])
 m2 = [precios.iloc[match, precios.columns.to_list().index(i)] for i in pos_datos['Ticker']]
 
-#pos_datos['Precio'] = m1
+#pos_datos['Precio_m1'] = m1
 pos_datos['Precio'] = m2
 
 #Capital destinado por acción = proporcion del capital - comisiones por la postura
@@ -165,23 +156,23 @@ pos_datos['Postura'] = pos_datos['Titulos']*pos_datos['Precio']
 pos_datos['Comision'] = pos_datos['Postura']*c
 pos_comision = pos_datos['Comision'].sum()
 
-#Efectivo libre en la postura
-#Capital - postura - comisión
-pos_cash = k - pos_datos['Postura'].sum() - pos_comision
-
 #la suma de las posturas (las de cada activo)
 pos_value = pos_datos['Postura'].sum()
+
+#Efectivo libre en la postura
+#Capital - postura - comisión
+pos_cash = k - pos_value - pos_comision
 
 #Guardar en una lista el capital (valor de la postura total (suma de las posturas + cash))
 df_pasiva['timestamp'].append(dates['t_fechas'][0])
 df_pasiva['capital'].append(pos_value + pos_cash)
 
 #---------------------Evolucion de la posicion (para mandarlo a todos los meses)
-for arch in range(1, len(archivos)):
+for month in range(1, len(archivos)):
 
     #Actualizar la columna de precio en el mismo dataframe
-    precios.index.to_list()[arch]
-    m2 = [precios.iloc[arch, precios.columns.to_list().index(i)] for i in pos_datos['Ticker']]
+    precios.index.to_list()[month]
+    m2 = [precios.iloc[month, precios.columns.to_list().index(i)] for i in pos_datos['Ticker']]
     pos_datos['Precio'] = m2
 
     #Valor de la postura por accion
@@ -191,7 +182,7 @@ for arch in range(1, len(archivos)):
     pos_value = pos_datos['Postura'].sum()
 
     #Actualizar lista de valores de cada llave en el diccionario
-    df_pasiva['timestamp'].append(dates['t_fechas'][arch])
+    df_pasiva['timestamp'].append(dates['t_fechas'][month])
     df_pasiva['capital'].append(pos_value + pos_cash)
 
 #Dataframe final
