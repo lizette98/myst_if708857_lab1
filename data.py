@@ -60,9 +60,9 @@ for i in archivos:
     data_archivos[i] = data
 # -----------------------------------------------------------------------------------------------------
 
-#Construir el vector de fechas a partir del vector de nombres
-#Funcion para obtener fechas
-fechas = fn.func_fechas(p_archivos=archivos)
+#Construir el vector de dates a partir del vector de nombres
+#Funcion para obtener dates
+dates = fn.func_fechas(p_archivos=archivos)
 
 # Descargar y acomodar datos
 tickers = []
@@ -88,11 +88,11 @@ data = yf.download(global_tickers, start="2018-01-30", end="2020-08-24", actions
                    auto_adjust=False, prepost=False, threads=True)
 print('se tardo', round(time.time()-inicio, 2), 'segundos')
 
-#Convertir columna de fechas
+#Convertir columna de dates
 data_close = pd.DataFrame({i: data[i]['Close'] for i in global_tickers})
 
 #Fechas de interes (Teoria de conjuntos)
-ic_fechas = sorted(list(set(data_close.index.astype(str).tolist()) & set(fechas['i_fechas'])))
+ic_fechas = sorted(list(set(data_close.index.astype(str).tolist()) & set(dates['i_fechas'])))
 
 #Localizar todos los precios
 precios = data_close.iloc[[int(np.where(data_close.index == i)[0]) for i in ic_fechas]]
@@ -100,9 +100,9 @@ precios = data_close.iloc[[int(np.where(data_close.index == i)[0]) for i in ic_f
 #Ordenar columnas lexicograficamente
 precios = precios.reindex(sorted(precios.columns), axis=1)
 
-#tomar solo las fechas de interes
+#tomar solo las dates de interes
 #tomar solo las columnas de interes
-#transponer matriz para tener x: fechas, y: precios
+#transponer matriz para tener x: dates, y: precios
 #multiplicar matriz de precios por matriz de pesos
 #hacer suma de cada columna para obtener valor de mercado
 
@@ -173,15 +173,14 @@ pos_cash = k - pos_datos['Postura'].sum() - pos_comision
 pos_value = pos_datos['Postura'].sum()
 
 #Guardar en una lista el capital (valor de la postura total (suma de las posturas + cash))
-df_pasiva['timestamp'].append(fechas['t_fechas'][0])
+df_pasiva['timestamp'].append(dates['t_fechas'][0])
 df_pasiva['capital'].append(pos_value + pos_cash)
 
 #---------------------Evolucion de la posicion (para mandarlo a todos los meses)
 for arch in range(1, len(archivos)):
+
     #Actualizar la columna de precio en el mismo dataframe
     precios.index.to_list()[arch]
-
-    # Precios necesarios para la posicion
     m2 = [precios.iloc[arch, precios.columns.to_list().index(i)] for i in pos_datos['Ticker']]
     pos_datos['Precio'] = m2
 
@@ -192,7 +191,7 @@ for arch in range(1, len(archivos)):
     pos_value = pos_datos['Postura'].sum()
 
     #Actualizar lista de valores de cada llave en el diccionario
-    df_pasiva['timestamp'].append(fechas['t_fechas'][arch])
+    df_pasiva['timestamp'].append(dates['t_fechas'][arch])
     df_pasiva['capital'].append(pos_value + pos_cash)
 
 #Dataframe final
