@@ -1,11 +1,12 @@
 
 """
 # -- --------------------------------------------------------------------------------------------------- -- #
-# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
+# -- project: In this project are proposed two investment strategies to manage one million pesos,
+# -- pasive and active.                                                                                  -- #
 # -- script: functions.py : python script with general functions                                         -- #
-# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- author: lizette98                                                                                   -- #
 # -- license: GPL-3.0 License                                                                            -- #
-# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- repository: https://github.com/lizette98/myst_if708857_lab1                                         -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 
@@ -49,14 +50,13 @@ def func_tickers(p_archivos, p_data_archivos):
 #-------- Descarga de precios de yfinance
 def func_precios(p_global_tickers, p_dates):
     # Descargar y acomodar datos
-    # Nota: Cuando se utiliza KOF, ese % o ponderacion la pasamos CASH
     # Contar tiempo que tarda
     inicio = time.time()
     # Descarga de precios de yfinance
     data = yf.download(p_global_tickers, start="2018-01-30", end="2020-08-24", actions=False, group_by="close",
                        interval='1d',
                        auto_adjust=False, prepost=False, threads=True)
-    print('se tardo', round(time.time() - inicio, 2), 'segundos')
+    print('tardo', round(time.time() - inicio, 2), 'segundos')
 
     # Convertir columna de dates
     data_close = pd.DataFrame({i: data[i]['Close'] for i in p_global_tickers})
@@ -72,14 +72,15 @@ def func_precios(p_global_tickers, p_dates):
 
     return precios
 
-#------ Posicion inicial inversion pasiva
-def p_i_pasiva(p_data_archivos, p_arch0, p_precios, p_param):
+#------- Funcion para posicion inicial en Inversion Pasiva
+def f_pi_pasiva(p_data_archivos, p_arch0, p_precios, p_archivos, p_dates):
+    # -----Posicion inicial
     # capital inicial
     k = 1000000
+
     # comisiones por transaccion
     c = 0.00125
-    #Parametros
-    p_param = {'capital': k, 'comision': c}
+
     # Vector de comisiones historicas
     comisiones = []
 
@@ -109,7 +110,7 @@ def p_i_pasiva(p_data_archivos, p_arch0, p_precios, p_param):
 
     # ------- Match de precios
     # Fecha en la que se busca hacer el match de precios
-    match = 7
+    match = 0
     p_precios.index.to_list()[match]
 
     # Precios necesarios para la posicion
@@ -139,33 +140,26 @@ def p_i_pasiva(p_data_archivos, p_arch0, p_precios, p_param):
     # Capital - postura - comisión
     pos_cash = k - pos_value - pos_comision
 
-    return p_i_pasiva
-
-#-------- Funcion para Dataframe Inversion pasiva
-def func_df_pasiva(p_dates, p_archivos, p_precios, p_param, p_i_pasiva):
-
-    df_pasiva = {'timestamp': ['30-01-2018'], 'capital': [p_param['k']]}
-    # Guardar en una lista el capital (valor de la postura total (suma de las posturas + cash))
-    df_pasiva['timestamp'].append(p_dates['t_fechas'][0])
-    df_pasiva['capital'].append(p_i_pasiva['pos_value'] + p_i_pasiva['pos_cash'])
-
-    # ---------------------Evolucion de la posicion (para mandarlo a todos los meses)
-    for month in range(1, len(p_archivos)):
+#------Datraframe final de Inversion Pasiva
+    for month in range(0, len(p_archivos)):
         # Actualizar la columna de precio en el mismo dataframe
-        m2 = [p_precios.iloc[month, p_precios.columns.to_list().index(i)] for i in p_i_pasiva['pos_datos']['Ticker']]
-        p_i_pasiva['pos_datos']['Precio'] = m2
+        p_precios.index.to_list()[month]
+        m2 = [p_precios.iloc[match, p_precios.columns.to_list().index(i)] for i in pos_datos['Ticker']]
+        pos_datos['Precio'] = m2
 
         # Valor de la postura por accion
-        p_i_pasiva['pos_datos']['Postura'] = p_i_pasiva['pos_datos']['Titulos'] * p_i_pasiva['pos_datos']['Precio']
+        pos_datos['Postura'] = pos_datos['Titulos'] * pos_datos['Precio']
 
         # Valor de la postura
-        pos_value = p_i_pasiva['pos_datos']['Postura'].sum()
+        pos_value = pos_datos['Postura'].sum()
 
         # Actualizar lista de valores de cada llave en el diccionario
         df_pasiva['timestamp'].append(p_dates['t_fechas'][month])
-        df_pasiva['capital'].append(pos_value + p_i_pasiva['pos_cash'])
+        df_pasiva['capital'].append(pos_value + pos_cash)
 
-    # Dataframe final
+        match = match + 1
+
+        # Dataframe final
     df_pasiva = pd.DataFrame(df_pasiva)
     # Rendimiento por mes
     df_pasiva['rend'] = [0] + list((df_pasiva['capital'] / df_pasiva['capital'].shift(1)) - 1)[1:]

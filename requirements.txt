@@ -1,14 +1,15 @@
 
 # -- --------------------------------------------------------------------------------------------------- -- #
-# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
+# -- project: In this project are proposed two investment strategies to manage one million pesos,
+# -- pasive and active.                                                                                  -- #
 # -- script: requirements.txt : text file with the required libraries for the project                    -- #
-# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- author: lizette98                                                                                   -- #
 # -- license: GPL-3.0 License                                                                            -- #
-# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- repository: https://github.com/lizette98/myst_if708857_lab1                                         -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 
 pandas>=1.1.0
 numpy>=1.19.1
 jupyter>=1.0.0
 yfinance~=0.1.54
-plotly>=
+plotly>=4.10.0

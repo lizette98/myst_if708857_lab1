@@ -1,11 +1,12 @@
 
 """
 # -- --------------------------------------------------------------------------------------------------- -- #
-# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
+# -- project: In this project are proposed two investment strategies to manage one million pesos,
+# -- pasive and active.                                                                                  -- #
 # -- script: data.py : python script for data collection                                                 -- #
-# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- author: lizette98                                                                                   -- #
 # -- license: GPL-3.0 License                                                                            -- #
-# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- repository: https://github.com/lizette98/myst_if708857_lab1                                         -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 
@@ -62,28 +63,3 @@ for i in archivos:
     data_archivos[i] = data
 # -----------------------------------------------------------------------------------------------------
 
-#Construir el vector de dates a partir del vector de nombres
-#Funcion para obtener dates
-dates = fn.func_fechas(p_archivos=archivos)
-
-#------- Funcion para tickers
-global_tickers = fn.func_tickers(p_archivos=archivos, p_data_archivos=data_archivos)
-
-#-------Descargar y acomodar precios
-precios = fn.func_precios(p_global_tickers=global_tickers, p_dates=dates)
-
-#tomar solo las dates de interes
-#tomar solo las columnas de interes
-#transponer matriz para tener x: dates, y: precios
-#multiplicar matriz de precios por matriz de pesos
-#hacer suma de cada columna para obtener valor de mercado
-
-#----- Posicion inicial
-k = 1000000
-c = 0.00125
-param = {'k': k, 'c': c}
-p_i_pasiva = fn.p_i_pasiva(p_data_archivos=data_archivos, p_arch0=archivos[0], p_precios=precios, p_param=param)
-
-
-#---------------------Evolucion de la posicion (para mandarlo a todos los meses)
-df_pasiva = fn.func_df_pasiva(p_dates=dates, p_archivos=archivos, p_precios=precios, p_param=param, p_i_pasiva=p_i_pasiva)
