@@ -15,7 +15,23 @@ import numpy as np
 import yfinance as yf
 import time as time
 
+
 def func_fechas(p_archivos):
+    """
+    Funcion para construir el vector de fechas,
+    para descarga de precios en yfinance y otra como indezadora de archivos.
+
+    Parameters
+    ----------
+    p_archivos: list
+            Lista con los nombres de los archivos a leer.
+
+    Returns
+    -------
+    func_fechas_r: dict
+            Diccionario con las fechas en los 2 formatos.
+            {'t_fechas': t_fechas, 'i_fechas': i_fechas}
+    """
     # Construir el vector de dates a partir del vector de nombres
     # Etiquetas en dataframe y para yfinance
     t_fechas = [i.strftime('%d-%m-%Y') for i in sorted([pd.to_datetime(i[8:]).date() for i in p_archivos])]
@@ -28,8 +44,26 @@ def func_fechas(p_archivos):
 
     return func_fechas_r
 
-#--------- Tickers para yfinance
+# --------- Tickers para yfinance
+
+
 def func_tickers(p_archivos, p_data_archivos):
+    """
+    Funcion para construir el vector de ticker,
+    para descarga de precios en yfinance.
+
+    Parameters
+    ----------
+    p_archivos: list
+            Lista con los nombres de los archivos a leer.
+
+    p_data_archivos:dict
+            Diccionario con los archivos a leer.
+    Returns
+    -------
+    global_tickers: list
+            Lista con todos los tickers a utilizar.
+        """
     tickers = []
     for i in p_archivos:
         l_tickers = list(p_data_archivos[i]['Ticker'])
@@ -47,8 +81,24 @@ def func_tickers(p_archivos, p_data_archivos):
 
     return global_tickers
 
-#-------- Descarga de precios de yfinance
+# -------- Descarga de precios de yfinance
+
+
 def func_precios(p_global_tickers, p_dates):
+    """
+    Funcion para decargar y acomodar los precios desde yfinance.
+
+    :param
+    p_global_tickers: list
+                Lista con todos los tickers a utilizar.
+    :param
+    p_dates: dict
+                Diccionario con las fechas en los 2 formatos.
+               {'t_fechas': t_fechas, 'i_fechas': i_fechas}
+    :return:
+    precios: DataFrame
+                Dataframe con todos los precios necesarios.
+    """
     # Descargar y acomodar datos
     # Contar tiempo que tarda
     inicio = time.time()
@@ -72,8 +122,32 @@ def func_precios(p_global_tickers, p_dates):
 
     return precios
 
-#------- Funcion para posicion inicial en Inversion Pasiva
+# ------- Funcion para posicion inicial en Inversion Pasiva
+
+
 def f_pi_pasiva(p_data_archivos, p_arch0, p_precios, p_archivos, p_dates):
+    """
+    Funcion para la creacion y evolucion de la posicion inicial en Inversion pasiva.
+
+    :param
+    p_data_archivos: dict
+                Diccionario con los archivos a leer.
+
+    :param p_arch0: value on list
+                Primer archivo a leer en la lista de archivos.
+
+    :param p_precios: DataFrame
+                Dataframe con todos los precios necesarios.
+
+    :param p_archivos: list
+                Lista con los nombres de los archivos a leer.
+    :param p_dates: dict
+                Diccionario con las fechas en los 2 formatos.
+               {'t_fechas': t_fechas, 'i_fechas': i_fechas}
+    :return:
+    df_pasiva: DataFrame
+                DataFrame con la evolucion de la posicion en inversion pasiva.
+    """
     # -----Posicion inicial
     # capital inicial
     k = 1000000
@@ -170,3 +244,5 @@ def f_pi_pasiva(p_data_archivos, p_arch0, p_precios, p_archivos, p_dates):
     df_pasiva['rend_acum'] = round(df_pasiva['rend'].cumsum(), 4)
 
     return df_pasiva
+
+#------Inversion Activa

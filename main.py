@@ -55,4 +55,6 @@ fig.show()
 
 #----- Evolución de la postura inversion activa
 
+
+
 #----- Medidas de atribucion al desempeño
