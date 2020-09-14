@@ -10,34 +10,28 @@
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 
-#importar librerias
+# Importar librerias
 import pandas as pd
-import numpy as np
-import yfinance as yf
-import time as time
 from os import listdir, path
 from os.path import isfile, join
-
-
-import functions as fn
 
 pd.set_option('display.expand_frame_rep', False)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 
-#Leer archivos
+# Leer archivos
 abspath = path.abspath('files/NAFTRAC_holdings')
-#Lista de todos los archivos en la carpeta
-#Comprension de listas
+# Lista de todos los archivos en la carpeta
+# Comprension de listas
 archivos = [f[8:-4] for f in listdir(abspath) if isfile(join(abspath, f))]
 #Ordenar archivos cronologicamente
 archivos = ['NAFTRAC_' + i.strftime('%d%m%y') for i in sorted(pd.to_datetime(archivos))]
 
 
-#Leer archivos y guardarlos en diccionario
+# Leer archivos y guardarlos en diccionario
 
-#Diccionario para almacenar todos los datos
+# Diccionario para almacenar todos los datos
 data_archivos = {}
 
 for i in archivos:

@@ -17,7 +17,7 @@ Or you can manually install one by one using the name and version in the file.
 
 ## Funcionalities
 
-*Add here examples of core functionalities for the project in this repository.*
+*In this repository are some functions that work for download data from yfinance among others like create the strategies for capital investment.*
 
 ## Author
 *Andrea Lizette Contreras González, Financial Engineering Student at Instituto Tecnologico y de Estudios Superiores de Occidente (ITESO).*
